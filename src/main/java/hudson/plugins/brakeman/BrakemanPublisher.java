@@ -8,13 +8,15 @@ import hudson.model.Action;
 import hudson.model.Result;
 import hudson.plugins.analysis.core.*;
 import hudson.plugins.analysis.util.PluginLogger;
-import hudson.plugins.analysis.util.model.Priority;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONException;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import hudson.plugins.brakeman.scanners.*;
+import hudson.plugins.brakeman.ScanResult;
 
 /**
  * Publishes the results of the warnings analysis (freestyle project type).
@@ -30,8 +32,10 @@ public class BrakemanPublisher extends HealthAwarePublisher {
 	@Extension
 	public static final BrakemanDescriptor BRAKEMAN_DESCRIPTOR = new BrakemanDescriptor();
 	public String outputFile;
-	private static Pattern pattern = Pattern.compile("^([^\t]+?)\t(\\d+)\t([\\w\\s]+?)\t(\\w+)\t([^\t]+?)\t(High|Medium|Weak)", Pattern.MULTILINE);
-
+	/** Enum for possible file types for brakeman output */
+	public enum FileType {
+		JSON, TABS
+	}
 
 	/**
 	 * Creates a new instance of <code>BrakemanPublisher</code>
@@ -91,66 +95,68 @@ public class BrakemanPublisher extends HealthAwarePublisher {
 
 	/** {@inheritDoc} */
 	@Override
-		public BuildResult perform(final Run<?, ?> build, final FilePath workspace, final PluginLogger logger) throws InterruptedException, IOException {
-			return publishReport(build, workspace);
-		}
+	public BuildResult perform(final Run<?, ?> build, final FilePath workspace, final PluginLogger logger) throws InterruptedException, IOException {
+		return publishReport(build, workspace, logger);
+	}
 
-		public BuildResult publishReport(final Run<?, ?> build, final FilePath workspace) throws InterruptedException, IOException {
-			FilePath brakemanOutput = new FilePath(workspace, this.outputFile);
+	public BuildResult publishReport(final Run<?, ?> build, final FilePath workspace, final PluginLogger logger) throws InterruptedException, IOException {
+		FilePath brakemanOutput = new FilePath(workspace, this.outputFile);
+		String output = brakemanOutput.readToString();
 
-			String output = brakemanOutput.readToString();
+		ParserResult project = new ParserResult(workspace);
 
-			ParserResult project = new ParserResult(workspace);
-			this.scan(output, project);
+        AbstractBrakemanScanner scanner = createScanner(output);
+		boolean successfulScan = scanner.scan(output, project, logger);
+		BrakemanResult result = new BrakemanResult(build, getDefaultEncoding(), project, usePreviousBuildAsReference(), useOnlyStableBuildsAsReference(), new ScanResult(successfulScan, brakemanOutput.getName()));
 
-			BrakemanResult result = new BrakemanResult(build, getDefaultEncoding(), project, usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
-			build.addAction(new BrakemanResultAction(build, this, result));
+		build.addAction(new BrakemanResultAction(build, this, result));
 
-			return result;
-		}
+		return result;
+	}
+
+    /**
+     * Determines the type of Scanner to use.
+     *
+     * @param outputContent
+     * @return scanner
+     */
+	protected AbstractBrakemanScanner createScanner(String outputContent) {
+        FileType scannerType = getFileType(outputContent);
+        AbstractBrakemanScanner scanner;
+        if(scannerType == FileType.JSON) {
+            scanner = new BrakemanJSONScanner();
+        } else {
+            scanner = new BrakemanTabsScanner();
+        }
+        return scanner;
+    }
+
+	/**
+	 * Determines the file type based upon the contents.
+	 *
+     * @param content
+	 * @return result
+	 */
+	protected FileType getFileType(String content) {
+		FileType result = FileType.TABS;
+		try {
+			JSONObject.fromObject(content);
+			result = FileType.JSON;
+		} catch (JSONException e) { }
+		return result;
+	}
+
 	/** {@inheritDoc} */
 	@Override
-		public PluginDescriptor getDescriptor() {
+	public PluginDescriptor getDescriptor() {
 			return BRAKEMAN_DESCRIPTOR;
 		}
 
 	/** {@inheritDoc} */
 	@Override
-		protected boolean canContinue(final Result result) {
+	protected boolean canContinue(final Result result) {
 			return super.canContinue(result);
 		}
-
-	private void scan(String brakemanOutput, ParserResult project) {
-		Matcher m = pattern.matcher(brakemanOutput);
-
-		while(m.find()) {
-			String fileName = m.group(1);
-			int line = Integer.parseInt(m.group(2));
-			String type = m.group(3);
-			String category = m.group(4);
-			String message = m.group(5);
-			String prio = m.group(6);
-
-			Priority priority = Priority.HIGH;
-			if ("Medium".equalsIgnoreCase(prio)) {
-				priority = Priority.NORMAL;
-			} else if ("High".equalsIgnoreCase(prio)) {
-				priority = Priority.HIGH;
-			} else if ("Weak".equalsIgnoreCase(prio)) {
-				priority = Priority.LOW;
-			}
-
-			int start = 0;
-			int end = line + 1;
-
-			if(line > 2)
-				start = line - 1;
-
-
-			project.addAnnotation(new Warning(fileName, start, end, type, category, message, priority));
-		}
-	}
-
 
   public hudson.matrix.MatrixAggregator createAggregator(hudson.matrix.MatrixBuild build,hudson.Launcher launcher,hudson.model.BuildListener listener) {
     return null;

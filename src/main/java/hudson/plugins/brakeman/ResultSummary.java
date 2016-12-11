@@ -16,20 +16,27 @@ public final class ResultSummary {
      */
     public static String createSummary(final BrakemanResult result) {
         StringBuilder summary = new StringBuilder();
-        int bugs = result.getNumberOfAnnotations();
+        int bugs = result.getNumberOfNonIgnoredAnnotations();
+        int ignoredBugs = result.getNumberOfIgnoredAnnotations();
 
         summary.append(Messages.Brakeman_ProjectAction_Name());
         summary.append(": ");
-        if (bugs > 0) {
+        if (bugs > 0 || ignoredBugs > 0) {
             summary.append("<a href=\"brakemanResult\">");
         }
         if (bugs == 1) {
             summary.append(Messages.Brakeman_ResultAction_OneWarning());
-        }
-        else {
+            summary.append(". ");
+        } else {
             summary.append(Messages.Brakeman_ResultAction_MultipleWarnings(bugs));
+            summary.append(". ");
         }
-        if (bugs > 0) {
+        if (ignoredBugs == 1) {
+            summary.append(Messages.Brakeman_ResultAction_OneIgnoredWarning());
+        } else {
+            summary.append(Messages.Brakeman_ResultAction_MultipleIgnoredWarnings(ignoredBugs));
+        }
+        if (bugs > 0 || ignoredBugs > 0) {
             summary.append("</a>");
         }
         summary.append(".");
@@ -49,8 +56,7 @@ public final class ResultSummary {
             summary.append("<li><a href=\"brakemanResult/new\">");
             if (result.getNumberOfNewWarnings() == 1) {
                 summary.append(Messages.Brakeman_ResultAction_OneNewWarning());
-            }
-            else {
+            } else {
                 summary.append(Messages.Brakeman_ResultAction_MultipleNewWarnings(result.getNumberOfNewWarnings()));
             }
             summary.append("</a></li>");
@@ -59,8 +65,7 @@ public final class ResultSummary {
             summary.append("<li><a href=\"brakemanResult/fixed\">");
             if (result.getNumberOfFixedWarnings() == 1) {
                 summary.append(Messages.Brakeman_ResultAction_OneFixedWarning());
-            }
-            else {
+            } else {
                 summary.append(Messages.Brakeman_ResultAction_MultipleFixedWarnings(result.getNumberOfFixedWarnings()));
             }
             summary.append("</a></li>");

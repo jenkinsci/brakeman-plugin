@@ -4,6 +4,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Run;
 import hudson.plugins.brakeman.BrakemanPublisher;
+import hudson.plugins.analysis.util.PluginLogger;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
@@ -27,10 +28,12 @@ public class PublishBrakemanStepExecution extends AbstractSynchronousStepExecuti
     @Inject
     private transient PublishBrakemanStep step;
 
+    private transient PluginLogger logger;
+
 
     @Override
     protected Void run() throws Exception {
-        new BrakemanPublisher(step.getOutputFile()).publishReport(build, ws);
+        new BrakemanPublisher(step.getOutputFile()).publishReport(build, ws, logger);
         return null;
     }
 }
