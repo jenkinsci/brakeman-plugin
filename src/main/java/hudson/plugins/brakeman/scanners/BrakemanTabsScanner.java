@@ -20,7 +20,7 @@ public class BrakemanTabsScanner extends AbstractBrakemanScanner {
 
     private boolean result;
 
-    private static Pattern pattern = Pattern.compile("^([^\t]+?)\t(\\d+)\t([\\w\\s]+?)\t(\\w+)\t([^\t]+?)\t(High|Medium|Weak)", Pattern.MULTILINE);
+    private static Pattern pattern = Pattern.compile("^([^\t]+?)\t(\\d+)\t([\\w\\s]+?)\t(\\w+)\t([^\t]+?)\t(High|Medium|Weak|Info)", Pattern.MULTILINE);
     /**
      * Creates a new instance of <code>BrakemanTabsScanner</code>
      */
