@@ -3,7 +3,7 @@
     <connection>scm:git:ssh://github.com/jenkinsci/brakeman-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/jenkinsci/brakeman-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/brakeman-plugin</url>
-    <tag>HEAD</tag>
+    <tag>brakeman-0.9</tag>
   </scm>
   <modelVersion>4.0.0</modelVersion>
  
@@ -16,7 +16,7 @@
   <artifactId>brakeman</artifactId>
   <packaging>hpi</packaging>
   <name>Brakeman Plugin</name>
-  <version>0.9-SNAPSHOT</version>
+  <version>0.9</version>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/Brakeman+Plugin</url>
   <description>This plugin reads output from Brakeman, a static analysis vulnerability scanner for Ruby on Rails.</description>
 
