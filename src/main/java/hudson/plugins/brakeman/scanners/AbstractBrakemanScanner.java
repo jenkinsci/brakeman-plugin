@@ -34,7 +34,7 @@ public abstract class AbstractBrakemanScanner {
             prio = Priority.NORMAL;
         } else if ("High".equalsIgnoreCase(priority)) {
             prio =  Priority.HIGH;
-        } else if ("Weak".equalsIgnoreCase(priority)) {
+        } else if ("Weak".equalsIgnoreCase(priority) || "Info".equalsIgnoreCase(priority)) {
             prio =  Priority.LOW;
         }
         return prio;
