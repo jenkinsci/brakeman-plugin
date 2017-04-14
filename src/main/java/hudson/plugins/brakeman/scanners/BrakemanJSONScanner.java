@@ -51,7 +51,6 @@ public class BrakemanJSONScanner extends AbstractBrakemanScanner {
         for (int i = 0; i < rows.size(); i++) {
             JSONObject row = rows.getJSONObject(i);
             String fileName = row.getString("file");
-            int line = row.getInt("line");
             String type = row.getString("warning_type");
             String category = getCategory(filterType).getName();
             StringBuilder message = new StringBuilder();
@@ -62,6 +61,11 @@ public class BrakemanJSONScanner extends AbstractBrakemanScanner {
               message.
                 append(": ").
                 append(row.getString("code"));
+            }
+
+            int line = 1;
+            if(row.has("line")) {
+              line = row.getInt("line");
             }
 
             Priority priority = checkPriority(row.getString("confidence"));
