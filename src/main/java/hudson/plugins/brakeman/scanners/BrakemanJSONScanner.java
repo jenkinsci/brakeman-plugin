@@ -55,10 +55,15 @@ public class BrakemanJSONScanner extends AbstractBrakemanScanner {
             String type = row.getString("warning_type");
             String category = getCategory(filterType).getName();
             StringBuilder message = new StringBuilder();
-            message.
-                append(row.getString("message")).
+            message.append(row.getString("message"));
+
+            if(row.has("code")) {
+              String code = row.getString("code");
+              message.
                 append(": ").
                 append(row.getString("code"));
+            }
+
             Priority priority = checkPriority(row.getString("confidence"));
 
             project.addAnnotation(new Warning(fileName, getStart(line), getEnd(line), type, category, message.toString(), priority));
