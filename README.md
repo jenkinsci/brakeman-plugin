@@ -27,15 +27,15 @@ Upload `brakeman.hpi`.
 Add/append a shell command to your job configuration like (this is just an example):
 
     gem install brakeman --no-rdoc --no-ri &&
-    brakeman -o brakeman-output.tabs
+    brakeman -o brakeman-output.json
 
 Or, if [rvm](https://rvm.beginrescueend.com/) is available, you can use something like:
 
-    bash -l -c 'rvm use 1.8.7 &&
+    bash -l -c 'rvm use 2.3.1 &&
     rvm gemset create brakeman &&
     rvm gemset use brakeman &&
     gem install brakeman --no-rdoc --no-ri &&
-    brakeman -o brakeman-output.tabs'
+    brakeman -o brakeman-output.json'
 
 The version of Ruby may vary according to your setup.
 
@@ -50,8 +50,8 @@ Some adjustment may need to be done regarding paths. Brakeman needs to be run at
 Assuming build environment is configured as above:
 
     node {
-      sh 'brakeman -o brakeman-output.tabs'
-      publishBrakeman 'path/to/brakeman-output.tabs'
+      sh 'brakeman -o brakeman-output.json'
+      publishBrakeman 'path/to/brakeman-output.json'
     }
 
 ## Testing without Existing Jenkins Server
@@ -68,7 +68,7 @@ This starts up a copy of Jenkins with the Brakeman plugin installed. This is not
 
 This is to generate a new `brakeman.hpi`.
 
-Requires Maven2. You will likely need to modify your environment as documented [here](https://wiki.jenkins-ci.org/display/JENKINS/Plugin+tutorial#Plugintutorial-SettingUpEnvironment).
+Requires Maven 3. You will likely need to modify your environment as documented [here](https://wiki.jenkins-ci.org/display/JENKINS/Plugin+tutorial#Plugintutorial-SettingUpEnvironment).
 
 After cloning the source, run this in the main directory:
 
