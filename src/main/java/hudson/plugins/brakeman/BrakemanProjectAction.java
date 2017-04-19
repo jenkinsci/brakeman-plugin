@@ -1,7 +1,9 @@
 package hudson.plugins.brakeman;
 
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.plugins.analysis.core.AbstractProjectAction;
+import hudson.plugins.analysis.core.ResultAction;
+
 
 /**
  * Entry point to visualize the warnings trend graph in the project screen.
@@ -10,18 +12,23 @@ import hudson.plugins.analysis.core.AbstractProjectAction;
  *
  * @author Maximilian Odendahl
  */
-public class BrakemanProjectAction extends AbstractProjectAction<BrakemanResultAction> {
+public class BrakemanProjectAction extends AbstractProjectAction<ResultAction<BrakemanResult>> {
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -654316141132780562L;
 
     /**
-     * Instantiates a new find bugs project action.
+     * Instantiates a new Brakeman project action.
      *
-     * @param project
-     *            the project that owns this action
+     * @param job
      */
-    public BrakemanProjectAction(final AbstractProject<?, ?> project) {
-        super(project, BrakemanResultAction.class, BrakemanPublisher.BRAKEMAN_DESCRIPTOR);
+    public BrakemanProjectAction(final Job<?, ?> job) {
+        this(job, BrakemanResultAction.class);
+    }
+
+    public BrakemanProjectAction(final Job<?, ?> job,
+        final Class<? extends ResultAction<BrakemanResult>> type) {
+      super(job, type, Messages._Brakeman_ProjectAction_Name(), Messages._Brakeman_Trend_Name(),
+          BrakemanDescriptor.PLUGIN_NAME, BrakemanDescriptor.ACTION_ICON, BrakemanDescriptor.RESULT_URL);
     }
 
     /** {@inheritDoc} */

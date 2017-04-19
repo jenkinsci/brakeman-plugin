@@ -3,8 +3,6 @@ package hudson.plugins.brakeman;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Run;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
 import hudson.model.Result;
 import hudson.plugins.analysis.core.*;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -85,12 +83,6 @@ public class BrakemanPublisher extends HealthAwarePublisher {
 		protected Object readResolve() {
 			super.readResolve();
 			return this;
-		}
-
-	/** {@inheritDoc} */
-	@Override
-		public Action getProjectAction(final AbstractProject<?, ?> project) {
-			return new BrakemanProjectAction(project);
 		}
 
 	/** {@inheritDoc} */

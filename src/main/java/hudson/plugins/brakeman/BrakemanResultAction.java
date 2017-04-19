@@ -1,6 +1,8 @@
 package hudson.plugins.brakeman;
 
-import hudson.model.AbstractBuild;
+import java.util.Collection;
+
+import hudson.model.Action;
 import hudson.model.Run;
 import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.HealthDescriptor;
@@ -33,6 +35,11 @@ public class BrakemanResultAction extends AbstractResultAction<BrakemanResult> {
      */
     public BrakemanResultAction(final Run<?, ?> owner, final HealthDescriptor healthDescriptor, final BrakemanResult result) {
         super(owner, new BrakemanHealthDescriptor(healthDescriptor), result);
+    }
+
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+      return asSet(new BrakemanProjectAction(getJob()));
     }
 
     /** {@inheritDoc} */
