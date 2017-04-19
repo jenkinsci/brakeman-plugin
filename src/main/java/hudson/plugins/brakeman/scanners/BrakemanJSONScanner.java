@@ -70,7 +70,13 @@ public class BrakemanJSONScanner extends AbstractBrakemanScanner {
 
             Priority priority = checkPriority(row.getString("confidence"));
 
-            project.addAnnotation(new Warning(fileName, getStart(line), getEnd(line), type, category, message.toString(), priority));
+            if(row.has("description")) { // Brakeman Pro reports have extended descriptions
+              String description = row.getString("description");
+
+              project.addAnnotation(new Warning(fileName, getStart(line), getEnd(line), type, category, message.toString(), description, priority));
+            } else {
+              project.addAnnotation(new Warning(fileName, getStart(line), getEnd(line), type, category, message.toString(), priority));
+            }
         }
     }
 
