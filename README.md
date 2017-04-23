@@ -31,7 +31,7 @@ Add/append a shell command to your job configuration like (this is just an examp
 
 Or, if [rvm](https://rvm.beginrescueend.com/) is available, you can use something like:
 
-    bash -l -c 'rvm use 2.3.1 &&
+    bash -l -c 'rvm use 2.4.1 &&
     rvm gemset create brakeman &&
     rvm gemset use brakeman &&
     gem install brakeman --no-rdoc --no-ri &&
