@@ -18,9 +18,12 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 public final class BrakemanDescriptor extends PluginDescriptor {
     /** Plug-in name. */
-    private static final String PLUGIN_NAME = "brakeman";
+    public static final String PLUGIN_NAME = "brakeman";
     /** Icon to use for the result and project action. */
-    private static final String ACTION_ICON = "/plugin/brakeman/icons/warnings-24x24.png";
+    public static final String ACTION_ICON = "/plugin/brakeman/icons/warnings-24x24.png";
+    /** The URL of the result action. */
+    public static final String RESULT_URL = PluginDescriptor.createResultUrlName(PLUGIN_NAME);
+
 
     /**
      * Instantiates a new find bugs descriptor.
