@@ -57,16 +57,16 @@ public class BrakemanJSONScanner extends AbstractBrakemanScanner {
             message.append(row.getString("message"));
 
             if(row.has("code")) {
-              String code = row.getString("code");
-              message.
-                append(": ").
-                append(row.getString("code"));
+              String code = row.optString("code", "");
+
+              if(!code.isEmpty()) {
+                message.
+                  append(": ").
+                  append(row.getString("code"));
+              }
             }
 
-            int line = 1;
-            if(row.has("line")) {
-              line = row.getInt("line");
-            }
+            int line = row.optInt("line", 1);
 
             Priority priority = checkPriority(row.getString("confidence"));
 
