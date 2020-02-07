@@ -36,11 +36,11 @@ public class BrakemanTabsScanner extends AbstractBrakemanScanner {
 
     private void scanWarnings(Matcher m, ParserResult project) {
         while(m.find()) {
-            String fileName = m.group(1);
+            String fileName = escapeHTML(m.group(1));
             int line = Integer.parseInt(m.group(2));
             String type = m.group(3);
             String category = m.group(4);
-            String message = m.group(5);
+            String message = escapeHTML(m.group(5));
             Priority priority = checkPriority(m.group(6));
 
             project.addAnnotation(new Warning(fileName, getStart(line), getEnd(line), type, category, message, priority));

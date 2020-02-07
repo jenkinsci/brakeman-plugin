@@ -50,8 +50,8 @@ public class BrakemanJSONScanner extends AbstractBrakemanScanner {
         JSONArray rows = brakemanResultFile.getJSONArray(filterType);
         for (int i = 0; i < rows.size(); i++) {
             JSONObject row = rows.getJSONObject(i);
-            String fileName = row.getString("file");
-            String type = row.getString("warning_type");
+            String fileName = escapeHTML(row.getString("file"));
+            String type = escapeHTML(row.getString("warning_type"));
             String category = getCategory(filterType).getName();
             StringBuilder message = new StringBuilder();
             message.append(row.getString("message"));
@@ -70,12 +70,14 @@ public class BrakemanJSONScanner extends AbstractBrakemanScanner {
 
             Priority priority = checkPriority(row.getString("confidence"));
 
-            if(row.has("description")) { // Brakeman Pro reports have extended descriptions
-              String description = row.getString("description");
+            String escapedMessage = escapeHTML(message.toString());
 
-              project.addAnnotation(new Warning(fileName, getStart(line), getEnd(line), type, category, message.toString(), description, priority));
+            if(row.has("description")) { // Brakeman Pro reports have extended descriptions
+              String description = escapeHTML(row.getString("description"));
+
+              project.addAnnotation(new Warning(fileName, getStart(line), getEnd(line), type, category, escapedMessage, description, priority));
             } else {
-              project.addAnnotation(new Warning(fileName, getStart(line), getEnd(line), type, category, message.toString(), priority));
+              project.addAnnotation(new Warning(fileName, getStart(line), getEnd(line), type, category, escapedMessage, priority));
             }
         }
     }

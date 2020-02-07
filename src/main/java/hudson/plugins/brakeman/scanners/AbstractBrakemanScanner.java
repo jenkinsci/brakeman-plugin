@@ -4,6 +4,8 @@ import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.util.model.Priority;
 import hudson.plugins.analysis.util.PluginLogger;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 /**
  * A Java class that representats an abstract Scanner class for the Brakeman Output file
  * This class includes a specific strategy for implementing the parsing process
@@ -38,5 +40,11 @@ public abstract class AbstractBrakemanScanner {
             prio =  Priority.LOW;
         }
         return prio;
+    }
+
+    protected String escapeHTML(String value) {
+      // escapeXml() is being used because we need to also
+      // escape file names but don't want to mess them up too much
+      return StringEscapeUtils.escapeXml(value);
     }
 }
